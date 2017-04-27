@@ -20,14 +20,3 @@ class Test extends React.Component {
     )
   }
 }
-
-class Roles extneds React.Component {
-  constructor() {
-
-  }
-  render(){
-    return (
-      <div className={{fontSize: 10px}}></div>
-    )
-  }
-}
