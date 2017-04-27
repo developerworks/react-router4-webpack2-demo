@@ -9,6 +9,8 @@ const ManifestPlugin             = require('webpack-manifest-plugin');
 const ChunkManifestPlugin        = require("chunk-manifest-webpack-plugin");
 // const PreloadWebpackPlugin       = require('preload-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const ClosureCompilerPlugin      = require('webpack-closure-compiler');
+var ParallelUglifyPlugin         = require('webpack-parallel-uglify-plugin');
 
 const publicPath                 = 'http://locahost:3001/';
 
@@ -25,7 +27,7 @@ module.exports = {
              filename: '[name]-[hash].js',
         chunkFilename: '[id].[chunkhash].chunk.js',
         // chunkFilename: '[name]-[id].js',
-                 path: path.resolve(__dirname, '../dist'),
+                 path: path.resolve(__dirname, 'dist'),
     sourceMapFilename: '[name].[chunkhash].map',
            // publicPath: 'http://127.0.0.1:3001/'
   },
@@ -43,9 +45,9 @@ module.exports = {
       'react',
       'react-dom',
       'react-router',
-      'react-router-dom',
-      'moment'
+      'react-router-dom'
     ],
+    moment: 'moment',
     antd: [
       'antd/lib/button',
       'antd/lib/table',
@@ -208,12 +210,29 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: ["vendor", "manifest"],
       // filename: '[name].[hash].js',
-      minChunks: 2
+      minChunks: 4
     }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'vendor',
+    //   minChunks: function (module) {
+    //     // 该配置假定你引入的 vendor 存在于 node_modules 目录中
+    //     return module.context && module.context.indexOf('node_modules') !== -1;
+    //   }
+    // }),
     // new ManifestPlugin({
     //   fileName: 'manifest.json'
     // }),
-
+    // new ParallelUglifyPlugin({
+    //   cacheDir: '.cache/',
+    //     uglifyJS:{
+    //     output: {
+    //       comments: false
+    //     },
+    //     compress: {
+    //       warnings: false
+    //     }
+    //   }
+    // }),
     // 第三方插件
     new HappyPack({
       cache: true,
@@ -266,10 +285,18 @@ module.exports = {
     //   path: path.join(__dirname, "js", "[name]-manifest.json"),
     //   name: "[name]_[hash]"
     // })
+    // new ClosureCompilerPlugin({
+    //   compiler: {
+    //     language_in: 'ECMASCRIPT6',
+    //     language_out: 'ECMASCRIPT5',
+    //     compilation_level: 'ADVANCED'
+    //   },
+    //   concurrency: 3,
+    // }),
     new HtmlWebpackPlugin({
       title: 'Webpack2 入门指南',
       inject: 'body',
-      template: 'src/index.html',
+      template: './src/index.html',
       chunksSortMode: 'dependency',
       favicon: './src/favicon.ico',
       minify: false,
@@ -286,13 +313,14 @@ module.exports = {
   // ---------------------------------------------------------
   devServer: {
     hot: true,
-    port: 3001,
-    host: '0.0.0.0',
-    contentBase: path.resolve(__dirname, '../dist'),
+    // port: 3001,
+    // host: '0.0.0.0',
+    contentBase: path.resolve(__dirname, 'dist'),
     // historyApiFallback: true,
     noInfo: false,
     // stats: 'minimal',
-    publicPath: publicPath
+    // publicPath: publicPath,
+    publicPath: '/'
   }
 };
 // function buildConfig(env) {
