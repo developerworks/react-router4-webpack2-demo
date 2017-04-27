@@ -9,7 +9,7 @@ const ManifestPlugin             = require('webpack-manifest-plugin');
 const ChunkManifestPlugin        = require("chunk-manifest-webpack-plugin");
 // const PreloadWebpackPlugin       = require('preload-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
-const ClosureCompilerPlugin      = require('webpack-closure-compiler');
+// const ClosureCompilerPlugin      = require('webpack-closure-compiler');
 var ParallelUglifyPlugin         = require('webpack-parallel-uglify-plugin');
 
 const publicPath                 = 'http://locahost:3001/';
