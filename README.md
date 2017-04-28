@@ -3,12 +3,17 @@
 如何运行服务器
 
 ```
-# 安装依赖
+# Install packages
+
 yarn install
+npm install
 
-# 启动开发服务器
-yarn run start
+# Start dev server
+yarn run dev
+npm run dev
 
-# 构建
+# Build
+
 yarn run build
+npm run build
 ```
