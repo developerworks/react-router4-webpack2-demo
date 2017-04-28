@@ -9,12 +9,29 @@ const ManifestPlugin             = require('webpack-manifest-plugin');
 const ChunkManifestPlugin        = require("chunk-manifest-webpack-plugin");
 // const PreloadWebpackPlugin       = require('preload-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
-// const ClosureCompilerPlugin      = require('webpack-closure-compiler');
-var ParallelUglifyPlugin         = require('webpack-parallel-uglify-plugin');
-
+const ClosureCompilerPlugin      = require('webpack-closure-compiler');
+// const ClosureCompiler            = require("google-closure-compiler-js");
+// const ClosureCompilerPlugin      = ClosureCompiler.webpack
+const ParallelUglifyPlugin       = require('webpack-parallel-uglify-plugin');
+const glob                       = require('glob');
+const PurifyCSSPlugin            = require('purifycss-webpack');
 const publicPath                 = 'http://locahost:3001/';
+const ExtractTextPlugin          = require("extract-text-webpack-plugin");
+const autoprefixer               = require('autoprefixer');
 
+const fs                         = require('fs');
+const pkgPath                    = path.resolve(__dirname, 'package.json');
+const pkg                        = fs.existsSync(pkgPath) ? require(pkgPath) : {};
+const BrowserSyncPlugin          = require('browser-sync-webpack-plugin');
 
+let theme = {};
+if (pkg.theme && typeof(pkg.theme) === 'string') {
+  let cfgPath = pkg.theme;
+  const getThemeConfig = require(cfgPath);
+  theme = getThemeConfig();
+} else if (pkg.theme && typeof(pkg.theme) === 'object') {
+  theme = pkg.theme;
+}
 
 module.exports = {
   cache: true,
@@ -22,14 +39,11 @@ module.exports = {
   // 输出定义
   // ---------------------------------------------------------
   output: {
-    // library: "[name]_[hash]"
-    // publicPath: publicPath,
              filename: '[name]-[hash].js',
         chunkFilename: '[id].[chunkhash].chunk.js',
-        // chunkFilename: '[name]-[id].js',
                  path: path.resolve(__dirname, 'dist'),
     sourceMapFilename: '[name].[chunkhash].map',
-           // publicPath: 'http://127.0.0.1:3001/'
+           publicPath: '/'
   },
   // context: path.resolve(__dirname, 'src'),
   // ---------------------------------------------------------
@@ -37,36 +51,20 @@ module.exports = {
   // 对象语法: https://webpack.js.org/concepts/entry-points/#object-syntax
   // ---------------------------------------------------------
   entry: {
-    'app': [
-      'babel-polyfill',
-      './src/index'
-    ],
     vendor: [
       'react',
       'react-dom',
       'react-router',
-      'react-router-dom'
+      'react-router-dom',
+      'moment'
     ],
-    moment: 'moment',
-    antd: [
-      'antd/lib/button',
-      'antd/lib/table',
-      'antd/lib/modal',
-      'antd/lib/message',
-      'antd/lib/form',
-      'antd/lib/menu',
-      'antd/lib/row',
-      'antd/lib/col',
-      'antd/lib/tooltip',
-      'antd/lib/radio',
-      'antd/lib/date-picker',
-      'antd/lib/time-picker',
-      'antd/lib/input',
-      'antd/lib/input-number',
-      'antd/lib/notification',
-      'antd/lib/pagination',
-      'antd/lib/select',
-      'antd/lib/tag',
+    // antd: [
+    //   'antd'
+    // ],
+    'app': [
+      'babel-polyfill',
+      'react-hot-loader/patch',
+      './src/index'
     ]
   },
   // ---------------------------------------------------------
@@ -74,7 +72,7 @@ module.exports = {
   // ---------------------------------------------------------
   module: {
     rules: [
-      // 模块加载器
+      // Javascript模块加载器
       {
         test: /\.js|jsx$/,
         exclude: /(node_modules|bower_components)/,
@@ -97,77 +95,77 @@ module.exports = {
           }
         }
       },
+      // CSS模块加载器, 提取到单独的文件中
+      // 把入口块中导入的所有CSS模块提取到单独的文件中, 样式表不再嵌入到
+      // JS模块中, 而在一个单独的CSS文件中. 如果样式表比较大, 把样式表分离
+      // 到单独的文件中是有好处的, 可以让JS和CSS并行下载.
+      // {
+      //   test: /\.css$/,
+      //   use: [
+      //     'style-loader',
+      //     { loader: 'css-loader', options: { modules: true, importLoaders: 1 } },
+      //     { loader: 'postcss-loader' },
+      //   ]
+      // },
       {
-        test:/\.(png|jpg)$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 8192
-          }
-        }
+        test: /\.css$/,
+        exclude: '/node_modules/',
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: [
+            {
+              loader: "css-loader?modules",
+              options: {
+                importLoaders: 1,
+                sourceMap: true,
+                minimize: false
+              }
+            }
+          ]
+        })
       },
       {
-        test:/\.svg(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 8192
-          }
-        }
+        test: /\.scss$/,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: [{
+            loader: "css-loader",
+            options: {
+              importLoaders: 1,
+              sourceMap: true,
+              minimize: false
+            }
+          }, {
+            loader: "postcss-loader"
+          }, {
+            loader: "sass-loader?modules"
+          }]
+        })
       },
       {
-        test:/\.woff(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            prefix: 'fonts/&name=[path][name].[ext]',
-            limit:10000,
-            mimetype:'application/font-woff'
-          }
-        }
+        test: /\.less$/,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: [{
+            loader: "css-loader",
+            options: {
+              importLoaders: 2,
+              sourceMap: true,
+              minimize: false
+            }
+          }, {
+            loader: "postcss-loader"
+          }, {
+            loader: `less-loader?{"sourceMap":true,"modifyVars":${JSON.stringify(theme)}}`
+          }]
+        })
       },
       {
-        test:/\.woff2(\?.*)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            prefix: 'fonts/&name=[path][name].[ext]',
-            limit:10000,
-            mimetype:'application/font-woff2'
-          }
-        },
+        test: /\.svg/,
+        use: [{
+          loader: "url-loader?limit=1000000"
+        }]
       },
-      {
-        test:/\.otf(\?.*)?$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            prefix: 'fonts/&name=[path][name].[ext]',
-            limit:10000,
-            mimetype:'mimetype=font/opentype'
-          }
-        }
-      },
-      {
-        test:/\.ttf(\?.*)?$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            prefix: 'fonts/&name=[path][name].[ext]',
-            limit:10000,
-            mimetype:'application/octet-stream'
-          }
-        }
-      },
-      {
-        test:/\.eot(\?.*)?$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            prefix: 'fonts/&name=[path][name].[ext]',
-          }
-        }
-      }
 
     ]
   },
@@ -186,6 +184,13 @@ module.exports = {
   // 插件
   // ---------------------------------------------------------
   plugins: [
+    // new webpack.LoaderOptionsPlugin({
+    //   options: {
+    //     postcss: [
+    //       autoprefixer()
+    //     ]
+    //    }
+    // }),
     // 内置插件
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
@@ -203,17 +208,18 @@ module.exports = {
     //     screw_ie8: true
     //   }
     // }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production'),
-      'process.env.HAPPY_CACHE': true
-    }),
+    // new webpack.DefinePlugin({
+    //   'process.env.NODE_ENV': JSON.stringify('production'),
+    //   'process.env.HAPPY_CACHE': true
+    // }),
     new webpack.optimize.CommonsChunkPlugin({
       name: ["vendor", "manifest"],
-      // filename: '[name].[hash].js',
-      minChunks: 4
+      filename: '[name].[hash].js',
+      minChunks: 2
     }),
     // new webpack.optimize.CommonsChunkPlugin({
     //   name: 'vendor',
+    //   filename: '[name].[hash].js',
     //   minChunks: function (module) {
     //     // 该配置假定你引入的 vendor 存在于 node_modules 目录中
     //     return module.context && module.context.indexOf('node_modules') !== -1;
@@ -233,7 +239,11 @@ module.exports = {
     //     }
     //   }
     // }),
+
+    // ---------------------------------------------
     // 第三方插件
+    // ---------------------------------------------
+
     new HappyPack({
       cache: true,
       threadPool: happyThreadPool,
@@ -254,6 +264,28 @@ module.exports = {
       }],
       threads: 8
     }),
+
+    // -------------------------
+    // 把样式表提取到单独的文件中
+    // -------------------------
+
+    new ExtractTextPlugin({
+      filename: '[id].[contenthash].chunk.css',
+      allChunks: true,
+      disable: false
+    }),
+
+    new HtmlWebpackPlugin({
+      title: 'Webpack2 入门指南',
+      inject: 'body',
+      template: './src/index.html',
+      chunksSortMode: 'dependency',
+      favicon: './src/favicon.ico',
+      minify: false,
+      hash: true,
+      xhtml: true
+    }),
+
     // new ChunkManifestPlugin({
     //   filename: "chunk-manifest.json",
     //   manifestVariable: "webpackManifest"
@@ -289,37 +321,37 @@ module.exports = {
     //   compiler: {
     //     language_in: 'ECMASCRIPT6',
     //     language_out: 'ECMASCRIPT5',
-    //     compilation_level: 'ADVANCED'
+    //     compilation_level: 'SIMPLE'
     //   },
-    //   concurrency: 3,
+    //   concurrency: 2,
     // }),
-    new HtmlWebpackPlugin({
-      title: 'Webpack2 入门指南',
-      inject: 'body',
-      template: './src/index.html',
-      chunksSortMode: 'dependency',
-      favicon: './src/favicon.ico',
-      minify: false,
-      hash: true,
-      xhtml: true
-    }),
+
     // 脚本加载属性
     // new ScriptExtHtmlWebpackPlugin({
     //   defaultAttribute: 'defer'
     // }),
+    // new PurifyCSSPlugin({
+    //    paths: glob.sync(path.join(__dirname, 'src/*.html')),
+    // }),
+    new BrowserSyncPlugin({
+      host: 'localhost',
+      port: 3000,
+      // server: {
+      //   baseDir: ['dist']
+      // },
+      proxy: 'http://localhost:8080/'
+    }, {
+      name: 'dev',
+      reload: false
+    }),
   ],
+
   // ---------------------------------------------------------
   // 开发服务器配置
   // ---------------------------------------------------------
   devServer: {
     hot: true,
-    // port: 3001,
-    // host: '0.0.0.0',
     contentBase: path.resolve(__dirname, 'dist'),
-    // historyApiFallback: true,
-    noInfo: false,
-    // stats: 'minimal',
-    // publicPath: publicPath,
     publicPath: '/'
   }
 };

@@ -1,10 +1,14 @@
 # react-router4-webpack2-demo
 
-
-How to run the example:
+如何运行服务器
 
 ```
+# 安装依赖
 yarn install
-yarn run build
+
+# 启动开发服务器
 yarn run start
+
+# 构建
+yarn run build
 ```

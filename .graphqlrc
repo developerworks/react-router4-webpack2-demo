@@ -1,0 +1,12 @@
+{
+  "build-configs": {
+    "test": {
+      "input-dirs": [
+        "src/graphql"
+      ],
+      "exclude-dirs": [
+      ],
+      "schema-path": "./schema.json"
+    }
+  }
+}

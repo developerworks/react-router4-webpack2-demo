@@ -8,7 +8,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const webpackConfig = require('./webpack.config'); // haven't created this yet. No sweat.
 const path = require('path');
 
-const port = 3001;
+const port = 8080;
 
 // always dev enviroment when running webpack dev server
 const env = { dev: process.env.NODE_ENV };
