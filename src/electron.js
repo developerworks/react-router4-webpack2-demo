@@ -15,14 +15,16 @@ function createWindow () {
   mainWindow = new BrowserWindow({width: 800, height: 600})
 
   // 加载应用程序的index.html页面
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, '../src/index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
+  // mainWindow.loadURL(url.format({
+  //   pathname: path.join(__dirname, 'index.electron.html'),
+  //   protocol: 'file:',
+  //   slashes: true
+  // }))
+
+  mainWindow.loadURL('file://' + __dirname + '/index.electron.html');
 
   // 打开DevTools开发工具
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // 窗口关闭事件
   mainWindow.on('closed', function () {

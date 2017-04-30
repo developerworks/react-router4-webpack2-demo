@@ -5,15 +5,16 @@
         "targets": {
           "browsers": ["last 50 versions"],
           "electron": 1.6,
+          "node": "current",
         },
         "modules": false,
         "useBuiltIns": true,
-        "debug": true
+        "debug": false
       }
     ],
     "stage-0",
     "react",
-    "react-native"
+    "react-native",
   ],
   "plugins": [
     [

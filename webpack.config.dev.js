@@ -8,7 +8,8 @@ const path                       = require('path');
 
 // 配置变量
 const projectRoot               = path.resolve(__dirname, 'package.json');
-const publicPath                 = 'http://locahost:3001/';
+// const publicPath                 = 'http://locahost:8080/';
+const publicPath                 = '/';
 const packageConfig             = fs.existsSync(projectRoot) ? require(projectRoot) : {};
 
 
@@ -22,7 +23,7 @@ const ChunkManifestPlugin        = require("chunk-manifest-webpack-plugin");
 const CopyWebpackPlugin          = require('copy-webpack-plugin');
 const ExtractTextPlugin          = require("extract-text-webpack-plugin");
 const FaviconsWebpackPlugin      = require('favicons-webpack-plugin');
-
+const BrowserSyncPlugin          = require('browser-sync-webpack-plugin');
 const HtmlWebpackPlugin          = require('html-webpack-plugin');
 const ManifestPlugin             = require('webpack-manifest-plugin');
 const ParallelUglifyPlugin       = require('webpack-parallel-uglify-plugin');
@@ -53,7 +54,7 @@ let WebpackConfig = {
            publicPath: publicPath
   },
 // context: path.resolve(__dirname, 'src'),
-  target: 'electron-renderer',
+  // target: 'electron-renderer',
 // ---------------------------------------------------------
 // 入口定义
 // 对象语法: https://webpack.js.org/concepts/entry-points/#object-syntax
@@ -150,12 +151,17 @@ let WebpackConfig = {
               minimize: false
             }
           }, {
-            loader: "postcss-loader"
-          }, {
+            // https://webpack.js.org/guides/migrating/#what-are-options-
             loader: "less-loader",
             options: {
               sourceMap: true,
-              modifyViars: JSON.stringify(theme)
+              modifyVars: {
+                // 'primary-color': '#1DA57A',
+                // 'link-color': '#1DA57A',
+                'border-radius-base': '1px',
+                'border-radius-sm': '1px',
+                'line-height-base': '1.2',
+              }
             }
           }]
         })
@@ -178,7 +184,7 @@ let WebpackConfig = {
 // ---------------------------------------------------------
 // Source Map
 // ---------------------------------------------------------
-// devtool: 'cheap-module-source-map',
+devtool: 'cheap-module-source-map',
 // ---------------------------------------------------------
 // 解析
 // ---------------------------------------------------------
@@ -190,7 +196,7 @@ let WebpackConfig = {
 // 插件
 // ---------------------------------------------------------
   plugins: [
-// 内置插件
+    // 内置插件
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
 // new webpack.optimize.UglifyJsPlugin({
@@ -244,7 +250,9 @@ let WebpackConfig = {
 // ---------------------------------------------
 
     new CopyWebpackPlugin([
-      {from: './src/images', to: 'images' }
+      {from: './src/images',      to: 'images'},
+      {from: './package.json',    to: 'package.json'},
+      {from: './src/electron.js', to: 'electron.js'},
     ], {
       copyUnmodified: true
     }),
@@ -291,6 +299,18 @@ let WebpackConfig = {
       title: 'Webpack2 入门指南',
       inject: 'body',
       template: './src/index.html',
+      filename: 'index.html',
+      chunksSortMode: 'dependency',
+      favicon: './src/favicon.ico',
+      minify: false,
+      hash: true,
+      xhtml: true
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Webpack2 入门指南',
+      inject: 'body',
+      template: './src/index.electron.html',
+      filename: 'index.electron.html',
       chunksSortMode: 'dependency',
       favicon: './src/favicon.ico',
       minify: false,
@@ -344,6 +364,20 @@ let WebpackConfig = {
 // new ScriptExtHtmlWebpackPlugin({
 //   defaultAttribute: 'defer'
 // }),
+// -------------------------
+// 浏览器同步刷新: 开发环境
+// -------------------------
+    new BrowserSyncPlugin({
+      host: 'localhost',
+      port: 3000,
+      // server: {
+      //   baseDir: ['dist']
+      // },
+      proxy: 'http://localhost:8080/'
+    }, {
+        name: 'dev',
+        reload: false
+    }),
   ],
 
   // ---------------------------------------------------------
@@ -355,24 +389,5 @@ let WebpackConfig = {
     publicPath: publicPath
   }
 };
-
-// -------------------------
-// 浏览器同步刷新: 开发环境
-// -------------------------
-if (process.env.NODE_ENV === 'development') {
-  const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
-  let plugin = new BrowserSyncPlugin({
-    host: 'localhost',
-    port: 3000,
-    // server: {
-    //   baseDir: ['dist']
-    // },
-    proxy: 'http://localhost:8080/'
-  }, {
-      name: 'dev',
-      reload: false
-  });
-  WebpackConfig.plugins.push(plugin);
-}
 
 module.exports = WebpackConfig;

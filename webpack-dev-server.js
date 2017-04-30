@@ -14,7 +14,7 @@ const port = 8080;
 const env = { dev: process.env.NODE_ENV };
 
 const devServerConfig = {
-  contentBase: path.join(__dirname, './src'),
+  contentBase: path.join(__dirname, './dist'),
   hot: true,
   // Need historyApiFallback to be able to refresh on dynamic route
   historyApiFallback: { disableDotRule: true },
