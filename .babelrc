@@ -1,16 +1,27 @@
 {
   "presets": [
-    "es2017",
     [
-      "latest",
-      {"es2015":{"modules": false}}
+      "env", {
+        "targets": {
+          "browsers": ["last 50 versions"],
+          "electron": 1.6,
+        },
+        "modules": false,
+        "useBuiltIns": true,
+        "debug": true
+      }
     ],
     "stage-0",
-    "react"
+    "react",
+    "react-native"
   ],
   "plugins": [
-    ["import",{"libraryName": "antd","style": true }],
+    [
+      "import",{
+        "libraryName": "antd",
+        "style": true
+      }
+    ],
     "react-hot-loader/babel"
   ]
 }
-

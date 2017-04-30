@@ -12,6 +12,8 @@ class About extends React.Component {
   render() {
     return (
       <div>
+        <h2>计划</h2>
+        <br/>
         <DatePicker onChange={this.onChange} />
       </div>
     )
