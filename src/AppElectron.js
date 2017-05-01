@@ -3,51 +3,23 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
-  Switch
+  Switch,
+  Link
 } from 'react-router-dom';
 
 import { Menu, Icon, Dropdown} from 'antd';
 
-import Link from './components/Link';
-
 // 模块异步加载器
-import Bundle from './bundle.js';
-import Nav   from './components/Nav';
-import PreloadSpinner   from './components/PreloadSpinner';
-import loadAbout from 'bundle-loader?lazy!./components/About';
-import loadHome  from 'bundle-loader?lazy!./components/Home';
-import loadUserPage from 'bundle-loader?lazy!./components/UserPage';
-import loadUserDetail from 'bundle-loader?lazy!./components/UserDetail';
-import loadNotFound from 'bundle-loader?lazy!./components/NotFound';
+import Bundle         from './bundle.js';
+import Nav            from './components/Nav';
+import PreloadSpinner from './components/PreloadSpinner';
+import About          from './components/About';
+import Home           from './components/Home';
+import UserPage       from './components/UserPage';
+import UserDetail     from './components/UserDetail';
+import NotFound       from './components/NotFound';
 
-import SubHome from './components/SubHome';
-
-const About = ({...props}) => (
-  <Bundle load={loadAbout}>
-    {(Component) => Component? <Component {...props}/>: <PreloadSpinner />}
-  </Bundle>
-)
-const Home = ({...props}) => (
-  <Bundle load={loadHome}>
-    {(Component) => Component? <Component {...props}/>: <PreloadSpinner />}
-  </Bundle>
-)
-const UserPage = ({...props}) => (
-  <Bundle load={loadUserPage}>
-    {(Component) => Component? <Component {...props}/>: <PreloadSpinner />}
-  </Bundle>
-)
-const UserDetail = ({...props}) => (
-  <Bundle load={loadUserDetail}>
-    {(Component) => Component? <Component {...props}/>: <PreloadSpinner />}
-  </Bundle>
-)
-const NotFound = ({...props}) => (
-  <Bundle load={loadNotFound}>
-    {(Component) => Component? <Component {...props}/>: <PreloadSpinner />}
-  </Bundle>
-)
-
+import SubHome        from './components/SubHome';
 
 const submenu = (
   <Menu>
@@ -82,7 +54,7 @@ class App extends React.Component {
     return (
       <Router>
         <div>
-          <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal" className="unselectable">
+          <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal">
             <Menu.Item key="/">
               <Link to="/">
                 <Icon type="mail" />

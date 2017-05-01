@@ -24,7 +24,7 @@ const avatars = [
 const data = [];
 
 for(let i = 0; i <= avatars.length; i++){
-  data.push({key: i, name: '胡彦祖',age: 42,address: '西湖区湖底公园1号', image: `${i}/${avatars[i]}`});
+  data.push({key: i, name: '胡彦祖3',age: 42,address: '西湖区湖底公园1号'});
 }
 
 const columns = [

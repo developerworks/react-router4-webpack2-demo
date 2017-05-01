@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development && webpack-dev-server --config webpack.config.dev.js --progress --history-api-fallback",
-    "build": "cross-env NODE_ENV=web_production  && webpack --config webpack.config.dev.js --progress",
-    "build:electron": "cross-env NODE_ENV=electron babel ./src --out-dir ./dist/electron",
-    "electron": "electron .",
+    "dev": "webpack-dev-server --config webpack.config.multi_targets.js --watch --progress --history-api-fallback",
+    "build": "webpack --progress --watch",
+    "electron": "electron dist",
     "flow": "flow; test $? -eq 0 -o $? -eq 2"
   },
-  "main": "electron.js",
+  "main": "main.js",
   "browserslist": "electron 1.6",
   "devDependencies": {
     "autoprefixer": "^6.7.7",
@@ -40,7 +39,6 @@
     "cross-env": "^4.0.0",
     "css-loader": "^0.28.0",
     "devtron": "^1.4.0",
-    "electron-builder": "^17.1.1",
     "electron-devtools-installer": "^2.2.0",
     "eslint": "^3.19.0",
     "eslint-plugin-compat": "^1.0.2",
@@ -75,11 +73,11 @@
     "webpack-dev-server": "^2.4.4",
     "webpack-hot-middleware": "^2.18.0",
     "webpack-manifest-plugin": "^1.1.0",
-    "webpack-parallel-uglify-plugin": "^0.4.1"
+    "webpack-parallel-uglify-plugin": "^0.4.1",
+    "write-file-webpack-plugin": "^4.0.2"
   },
   "dependencies": {
     "antd": "^2.9.3",
-    "electron": "^1.6.6",
     "global": "^4.3.2",
     "prop-types": "^15.5.8",
     "query-string": "^4.3.4",

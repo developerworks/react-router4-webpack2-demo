@@ -11,7 +11,6 @@ class UserPage extends React.Component {
     console.log("UserPage:")
     console.log(props)
   }
-
   render(){
     return (
       <div>
@@ -23,9 +22,7 @@ class UserPage extends React.Component {
           <Col span={4}>
             <Route path={`${this.props.match.url}/:id`} component={UserDetail}/>
           </Col>
-
         </Row>
-
       </div>
     )
   }

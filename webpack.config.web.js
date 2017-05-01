@@ -28,7 +28,7 @@ const HtmlWebpackPlugin          = require('html-webpack-plugin');
 const ManifestPlugin             = require('webpack-manifest-plugin');
 const ParallelUglifyPlugin       = require('webpack-parallel-uglify-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
-
+const WriteFilePlugin            = require('write-file-webpack-plugin');
 
 
 
@@ -46,15 +46,21 @@ let WebpackConfig = {
 // ---------------------------------------------------------
 // 输出定义
 // ---------------------------------------------------------
+  // output: {
+  //            filename: '[name]-[hash].js',
+  //       chunkFilename: '[id].[chunkhash].chunk.js',
+  //                path: path.resolve(__dirname, 'dist'),
+  //   sourceMapFilename: '[name].[chunkhash].map',
+  //          publicPath: publicPath
+  // },
   output: {
-             filename: '[name]-[hash].js',
-        chunkFilename: '[id].[chunkhash].chunk.js',
+             filename: '[name].js',
+        chunkFilename: '[id].chunk.js',
                  path: path.resolve(__dirname, 'dist'),
-    sourceMapFilename: '[name].[chunkhash].map',
-           publicPath: publicPath
+    sourceMapFilename: '[name].map',
+           publicPath: '/'
   },
 // context: path.resolve(__dirname, 'src'),
-  // target: 'electron-renderer',
 // ---------------------------------------------------------
 // 入口定义
 // 对象语法: https://webpack.js.org/concepts/entry-points/#object-syntax
@@ -66,7 +72,7 @@ let WebpackConfig = {
       'react-router',
       'react-router-dom',
     ],
-    'app': [
+    app: [
       'babel-polyfill',
       'react-hot-loader/patch',
       './src/index'
@@ -213,46 +219,22 @@ devtool: 'cheap-module-source-map',
 //     screw_ie8: true
 //   }
 // }),
-// new webpack.DefinePlugin({
-//   'process.env.NODE_ENV': JSON.stringify('production'),
-//   'process.env.HAPPY_CACHE': true
-// }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: ["vendor", "manifest"],
+    //   filename: '[name].[hash].js',
+    //   minChunks: 2
+    // }),
     new webpack.optimize.CommonsChunkPlugin({
       name: ["vendor", "manifest"],
-      filename: '[name].[hash].js',
+      filename: '[name].js',
       minChunks: 2
     }),
-// new webpack.optimize.CommonsChunkPlugin({
-//   name: 'vendor',
-//   filename: '[name].[hash].js',
-//   minChunks: function (module) {
-//     // 该配置假定你引入的 vendor 存在于 node_modules 目录中
-//     return module.context && module.context.indexOf('node_modules') !== -1;
-//   }
-// }),
-// new ManifestPlugin({
-//   fileName: 'manifest.json'
-// }),
-// new ParallelUglifyPlugin({
-//   cacheDir: '.cache/',
-//     uglifyJS:{
-//     output: {
-//       comments: false
-//     },
-//     compress: {
-//       warnings: false
-//     }
-//   }
-// }),
-
 // ---------------------------------------------
 // 复制静态资源
 // ---------------------------------------------
 
     new CopyWebpackPlugin([
-      {from: './src/images',      to: 'images'},
-      {from: './package.json',    to: 'package.json'},
-      {from: './src/electron.js', to: 'electron.js'},
+      {from: './src/images',              to: 'images'},
     ], {
       copyUnmodified: true
     }),
@@ -279,7 +261,7 @@ devtool: 'cheap-module-source-map',
           ]
         }
       }],
-      threads: 8
+      threads: 4
     }),
 
 // -------------------------
@@ -296,26 +278,16 @@ devtool: 'cheap-module-source-map',
 // -------------------------
 
     new HtmlWebpackPlugin({
-      title: 'Webpack2 入门指南',
-      inject: 'body',
+      title: '重庆龙猫信息技术有限公司「广告实时竞价管理系统」',
+      inject: true,
       template: './src/index.html',
       filename: 'index.html',
       chunksSortMode: 'dependency',
       favicon: './src/favicon.ico',
       minify: false,
       hash: true,
-      xhtml: true
-    }),
-    new HtmlWebpackPlugin({
-      title: 'Webpack2 入门指南',
-      inject: 'body',
-      template: './src/index.electron.html',
-      filename: 'index.electron.html',
-      chunksSortMode: 'dependency',
-      favicon: './src/favicon.ico',
-      minify: false,
-      hash: true,
-      xhtml: true
+      xhtml: true,
+      chunks: ['manifest', 'vendor', 'app']
     }),
 
 // new ChunkManifestPlugin({
@@ -378,6 +350,7 @@ devtool: 'cheap-module-source-map',
         name: 'dev',
         reload: false
     }),
+    new WriteFilePlugin()
   ],
 
   // ---------------------------------------------------------
