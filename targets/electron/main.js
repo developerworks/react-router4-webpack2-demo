@@ -1,4 +1,5 @@
 const electron = require('electron')
+const windowStateKeeper = require('electron-window-state')
 // 应用程序生命周期模块
 const app = electron.app
 // 创建原生浏览器窗口模块
@@ -10,15 +11,20 @@ const url = require('url')
 // 保持一个Window对象的全局引用, 否则Javascript对象在进行垃圾收集的时候窗口会被自动关闭.
 let mainWindow
 
-// 当Electron完成初始化并且准备创建浏览器窗口是条用. 类似与普通浏览器的 domReady 事件.
-// 某些API只在该事件发生后可用.
-app.on('ready', function(){
+function createWindow(){
+  let mainWindowState = windowStateKeeper({
+    defaultWidth: 1000,
+    defaultHeight: 800
+  })
+  console.log(mainWindowState)
   // 创建浏览器窗口
   mainWindow = new BrowserWindow({
     title: '生产管理系统',
     frame: true,
-    width: 1500,
-    height: 800,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
     center: true,
     resizable: true,
     movable: true,
@@ -34,6 +40,7 @@ app.on('ready', function(){
   mainWindow.loadURL('http://localhost:3000');
 
   // 打开DevTools开发工具
+  BrowserWindow.addDevToolsExtension("/Users/hezhiqiang/Library/Application\ Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/2.1.3_0")
   mainWindow.webContents.openDevTools()
 
   // 窗口关闭事件
@@ -41,7 +48,13 @@ app.on('ready', function(){
     // 取消窗口对象的引用, 如果应用程序支持多窗口, 你应该把床存储到数组中.
     mainWindow = null
   })
-});
+
+  mainWindowState.manage(mainWindow);
+}
+
+// 当Electron完成初始化并且准备创建浏览器窗口是条用. 类似与普通浏览器的 domReady 事件.
+// 某些API只在该事件发生后可用.
+app.on('ready', createWindow);
 
 // 当窗口被关闭是退出
 app.on('window-all-closed', function () {

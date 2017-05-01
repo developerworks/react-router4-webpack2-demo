@@ -78,6 +78,7 @@
   },
   "dependencies": {
     "antd": "^2.9.3",
+    "electron-window-state": "^4.1.1",
     "global": "^4.3.2",
     "prop-types": "^15.5.8",
     "query-string": "^4.3.4",

@@ -36,7 +36,7 @@ class UserDetail extends React.Component {
           <p>单击下载该图片</p>
         </div>
         <div className="custom-image">
-          <a href={`/images/${avatars[this.props.match.params.id]}`} download={`${avatars[this.props.match.params.id]}`}>
+          <a href={`/images/${avatars[this.props.match.params.id]}`} download={`${avatars[this.props.match.params.id]}`} type="image/png">
             <img alt="example" width="100%" src={`/images/${avatars[this.props.match.params.id]}`} />
           </a>
         </div>
