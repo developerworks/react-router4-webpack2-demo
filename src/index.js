@@ -12,6 +12,11 @@ import {
 import App from './App';
 
 import { AppContainer } from 'react-hot-loader';
+
+import * as OfflinePluginRuntime from 'offline-plugin/runtime';
+OfflinePluginRuntime.install();
+
+
 const render = (Component) => {
   ReactDOM.render(
     <AppContainer>

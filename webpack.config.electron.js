@@ -32,6 +32,7 @@ const ParallelUglifyPlugin       = require('webpack-parallel-uglify-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const WriteFilePlugin            = require('write-file-webpack-plugin');
 // const I18nPlugin                 = require("i18n-webpack-plugin");
+const OfflinePlugin              = require('offline-plugin');
 
 
 
@@ -328,15 +329,6 @@ let WebpackConfig = {
 //   }
 // }),
 
-// -------------------------
-//
-// -------------------------
-
-// new webpack.DllPlugin({
-//   path: path.join(__dirname, "js", "[name]-manifest.json"),
-//   name: "[name]_[hash]"
-// })
-
 
 // 脚本加载属性
 // new ScriptExtHtmlWebpackPlugin({
@@ -357,6 +349,8 @@ let WebpackConfig = {
     //     reload: false
     // }),
     // new WriteFilePlugin()
+    new OfflinePlugin()
+
   ],
 
   // ---------------------------------------------------------

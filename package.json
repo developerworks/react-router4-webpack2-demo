@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --watch webpack.config.web.js --exec \"webpack-dev-server --config webpack.config.multi_targets.js --watch --progress --history-api-fallback --info false\"",
+    "watch": "nodemon --watch webpack.config.web.js --exec \"webpack-dev-server --config webpack.config.multi_targets.js --watch --progress --history-api-fallback --info false\"",
     "dev": "webpack-dev-server --config webpack.config.multi_targets.js --watch --progress --history-api-fallback --info false",
     "build": "webpack --progress --watch",
     "build:osx": "webpack --config webpack.config.electron.js --progress",
+    "build:dll": "rm -rf dist && webpack --config webpack.config.dll.js --progress",
+    "build:dllmin": "webpack --config webpack.config.dll.js --progress --optimize-minimize",
     "package:osx": "electron-packager dist_electron --platform=darwin --arch=x64 --out=_releases --overwrite --icon=./targets/electron/icon.icns",
     "flow": "flow; test $? -eq 0 -o $? -eq 2"
   },
@@ -60,6 +62,7 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
     "node-sass": "^4.5.2",
+    "offline-plugin": "^4.7.0",
     "postcss-loader": "^1.3.3",
     "postcss-smart-import": "^0.6.12",
     "precss": "^1.4.0",

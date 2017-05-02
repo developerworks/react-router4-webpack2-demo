@@ -32,7 +32,7 @@ const ParallelUglifyPlugin       = require('webpack-parallel-uglify-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const WriteFilePlugin            = require('write-file-webpack-plugin');
 // const I18nPlugin                 = require("i18n-webpack-plugin");
-
+const OfflinePlugin              = require('offline-plugin');
 
 
 let theme = {};
@@ -58,7 +58,7 @@ let WebpackConfig = {
   // },
   output: {
              filename: '[name].js',
-        chunkFilename: '[id].chunk.js',
+        chunkFilename: 'chunks/[id].chunk.js',
                  path: path.resolve(__dirname, 'dist'),
     sourceMapFilename: '[name].map',
            publicPath: '/'
@@ -88,24 +88,22 @@ let WebpackConfig = {
     rules: [
 // Javascript模块加载器
       {
-        test: /\.js|jsx$/,
-        exclude: /(node_modules|bower_components)/,
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components|dist|dist_electron|.cache|.happypack)/,
         use: {
           loader: 'babel-loader',
           options: {
-            cacheDirectory : true,
-//             presets: [
-//               ['es2015', {modules: false}]
-//             ],
-// // ES7
-//             plugins: [
-// // 模块动态导入
-//               'syntax-dynamic-import',
-//               'transform-async-to-generator',
-//               'transform-regenerator',
-// // 运行时转换
-//               'transform-runtime'
-//             ]
+            cacheDirectory: true,
+            cacheIdentifier: 'v1',
+            presets: [
+              ['es2015', {modules: false}]
+            ],
+            plugins: [
+              'syntax-dynamic-import',
+              'transform-async-to-generator',
+              'transform-regenerator',
+              'transform-runtime'
+            ]
           }
         }
       },
@@ -210,11 +208,13 @@ let WebpackConfig = {
 // ---------------------------------------------------------
 // devtool: 'cheap-module-source-map',
 // ---------------------------------------------------------
-// 解析
+// 模块查找路径列表
 // ---------------------------------------------------------
   resolve: {
-    extensions: ['.ts', '.js', '.json'],
-    modules: [path.join(__dirname, 'src'), 'node_modules']
+    modules: [
+      'node_modules',
+      path.join(__dirname, 'src'),
+    ]
   },
 // ---------------------------------------------------------
 // 插件
@@ -223,10 +223,15 @@ let WebpackConfig = {
     // 内置插件
     new webpack.NamedModulesPlugin(),
 // new webpack.optimize.UglifyJsPlugin({
+//   beautify: false,
+//   comments: false,
 //   sourceMap: true,
 //   compress: {
 //     screw_ie8: true, // React doesn't support IE8
-//     warnings: false
+//     warnings: false,
+//     drop_console: true,
+//     collapse_vars: true,
+//     reduce_vars: true,
 //   },
 //   mangle: {
 //     screw_ie8: true
@@ -237,7 +242,7 @@ let WebpackConfig = {
 //   }
 // }),
     new webpack.optimize.CommonsChunkPlugin({
-      name: ["vendor", "manifest"],
+      name: ["vendor", "app"],
       filename: '[name].js',
       minChunks: 2
     }),
@@ -245,11 +250,11 @@ let WebpackConfig = {
 // 复制静态资源
 // ---------------------------------------------
 
-    // new CopyWebpackPlugin([
-    //   {from: './src/images',              to: 'images'},
-    // ], {
-    //   copyUnmodified: true
-    // }),
+    new CopyWebpackPlugin([
+      {from: './src/images',              to: 'images'},
+    ], {
+      copyUnmodified: true
+    }),
 
 // ---------------------------------------------
 // 并行打包
@@ -264,12 +269,16 @@ let WebpackConfig = {
       {
         loader: 'babel-loader',
         options: {
-          presets: [[ 'es2015', { modules: false }], 'react' ],
+          cacheDirectory: true,
+          cacheIdentifier: 'v1',
+          presets: [
+            ['es2015', {modules: false}]
+          ],
           plugins: [
-            ['transform-runtime', {
-              polyfill: false,
-              regenerator: false
-            }],
+            'syntax-dynamic-import',
+            'transform-async-to-generator',
+            'transform-regenerator',
+            'transform-runtime'
           ]
         }
       }],
@@ -281,7 +290,8 @@ let WebpackConfig = {
 // -------------------------
 
     new ExtractTextPlugin({
-      filename: '[id].[contenthash].chunk.css',
+      // filename: '[id].[contenthash].chunk.css',
+      filename: '[id].chunk.css',
       allChunks: true,
       disable: false
     }),
@@ -294,12 +304,14 @@ let WebpackConfig = {
       inject: true,
       template: './src/index.html',
       filename: 'index.html',
-      chunksSortMode: 'dependency',
+      chunksSortMode: 'auto',
       favicon: './src/favicon.ico',
-      minify: false,
-      hash: true,
+      minify: false,  // HTML压缩
+      hash: false,    // 防缓存随机串
       xhtml: true,
-      chunks: ['manifest', 'vendor', 'app']
+      chunks: ['manifest', 'vendor', 'app'],
+      cache: true,
+      showErrors: true,
     }),
     new AddAssetHtmlPlugin({
       filepath: require.resolve('./dist/vendor.9389d7ef810eeab740c3.dll.js')
@@ -343,7 +355,7 @@ let WebpackConfig = {
 
   new webpack.DllReferencePlugin({
     context: __dirname,
-    manifest: require('./manifest.json')
+    manifest: require('./dist/vendor-manifest.dll.json')
   }),
 
 // 脚本加载属性
@@ -371,6 +383,15 @@ let WebpackConfig = {
     //   failOnMissing: false,
     //   hideMessage: false
     // })
+    new ManifestPlugin({
+      fileName: 'asset-manifest.json',
+      basePath: '/dist/'
+    }),
+    new OfflinePlugin({
+      main: [
+        'vendor.*.dll.js',
+      ],
+    })
   ],
 
   // ---------------------------------------------------------
