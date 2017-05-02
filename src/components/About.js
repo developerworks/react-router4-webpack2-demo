@@ -7,7 +7,7 @@ class About extends React.Component {
     this.onChange = this.onChange.bind(this);
   }
   onChange(date, dateString) {
-    console.log(date, dateString);
+    // console.log(date, dateString);
   }
   render() {
     return (

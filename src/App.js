@@ -1,4 +1,5 @@
 import style from './App.less';
+
 import React from 'react';
 import {
   BrowserRouter as Router,
@@ -73,7 +74,7 @@ class App extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
   handleClick(e) {
-    console.log('click', e)
+    // console.log('click', e)
     this.setState({
       current: e.key
     });
@@ -81,7 +82,7 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        <div>
+        <div className="unselectable">
           <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal" className="unselectable">
             <Menu.Item key="/">
               <Link to="/">

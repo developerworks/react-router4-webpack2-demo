@@ -75,7 +75,7 @@ let WebpackConfig = {
     app: [
       'babel-polyfill',
       'react-hot-loader/patch',
-      './src/index-electron'
+      './src/index'
     ]
   },
 // ---------------------------------------------------------
@@ -123,7 +123,7 @@ let WebpackConfig = {
                 sourceMap: true,
                 minimize: false
               }
-            }
+            },
           ]
         })
       },
@@ -149,27 +149,42 @@ let WebpackConfig = {
         test: /\.less$/,
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
-          use: [{
-            loader: "css-loader",
-            options: {
-              importLoaders: 2,
-              sourceMap: true,
-              minimize: false
-            }
-          }, {
-            // https://webpack.js.org/guides/migrating/#what-are-options-
-            loader: "less-loader",
-            options: {
-              sourceMap: true,
-              modifyVars: {
-                // 'primary-color': '#1DA57A',
-                // 'link-color': '#1DA57A',
-                'border-radius-base': '1px',
-                'border-radius-sm': '1px',
-                'line-height-base': '1.2',
+          use: [
+            {
+              loader: "css-loader",
+              options: {
+                importLoaders: 2,
+                sourceMap: true,
+                minimize: false
               }
-            }
-          }]
+            }, {
+              loader: 'postcss-loader',
+              options: {
+                plugins: function () {
+                  return [
+                    require('autoprefixer')
+                  ];
+                }
+              }
+            },
+            {
+              // https://webpack.js.org/guides/migrating/#what-are-options-
+              loader: "less-loader",
+              options: {
+                sourceMap: true,
+                modifyVars: {
+                  // 'primary-color': '#1DA57A',
+                  // 'link-color': '#1DA57A',
+                  'border-radius-base': '1px',
+                  'border-radius-sm': '1px',
+                  'line-height-base': '1.2',
+                  'text-color': 'fade(#000, 80%)',
+                  'font-size-base': '14px',
+
+                }
+              }
+            },
+          ]
         })
       },
       {
@@ -190,7 +205,7 @@ let WebpackConfig = {
 // ---------------------------------------------------------
 // Source Map
 // ---------------------------------------------------------
-devtool: 'cheap-module-source-map',
+  devtool: 'cheap-module-source-map',
 // ---------------------------------------------------------
 // 解析
 // ---------------------------------------------------------
@@ -216,6 +231,8 @@ devtool: 'cheap-module-source-map',
 
     new CopyWebpackPlugin([
       {from: './src/images',                    to: 'images'},
+      {from: './targets/electron/node_modules', to: 'node_modules'},
+      {from: './targets/electron/assets',       to: 'assets'},
       {from: './targets/electron/package.json', to: 'package.json'},
       // {from: './targets/electron/index.html',   to: 'index.html'},
       {from: './targets/electron/main.js',      to: 'main.js'},
@@ -253,9 +270,11 @@ devtool: 'cheap-module-source-map',
 // -------------------------
 
     new ExtractTextPlugin({
-      filename: '[id].[contenthash].chunk.css',
+      // id: 'extract',
+      filename: '[id].chunk.css',
       allChunks: true,
-      disable: false
+      disable: false,
+      ignoreOrder: false
     }),
 // -------------------------
 // 处理HTML入口文件

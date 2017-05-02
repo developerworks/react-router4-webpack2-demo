@@ -8,8 +8,6 @@ import { Row, Col } from 'antd';
 class UserPage extends React.Component {
   constructor(props){
     super(props)
-    console.log("UserPage:")
-    console.log(props)
   }
   render(){
     return (

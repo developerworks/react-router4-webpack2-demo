@@ -5,11 +5,10 @@
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.multi_targets.js --watch --progress --history-api-fallback",
     "build": "webpack --progress --watch",
-    "electron": "electron dist",
+    "build:mac": "webpack --config webpack.config.electron.js --progress && electron-packager dist_electron --platform=darwin --arch=x64 --out=_releases --overwrite --icon=./targets/electron/icon.icns",
     "flow": "flow; test $? -eq 0 -o $? -eq 2"
   },
   "main": "main.js",
-  "browserslist": "electron 1.6",
   "devDependencies": {
     "autoprefixer": "^6.7.7",
     "babel-core": "^6.24.1",

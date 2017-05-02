@@ -58,4 +58,4 @@ fastlane/screenshots
 /node_modules
 /.happypack
 /.cache
-/releases
+/_releases

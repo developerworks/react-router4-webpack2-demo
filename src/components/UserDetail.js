@@ -17,18 +17,11 @@ let avatars = [
   // "rachel.png"
 ];
 
-console.log("avatars:", avatars)
-
 class UserDetail extends React.Component {
   constructor(props) {
     super(props);
-    console.log("UserDetail:");
-    console.log(props);
   }
   render() {
-    console.log("UserDetail:");
-
-    console.log(this.props.match.params.id)
     return(
       <Card style={{ width: 240 }} bodyStyle={{ padding: 0 }}>
         <div className="custom-card">

@@ -91,18 +91,18 @@ let WebpackConfig = {
           loader: 'babel-loader',
           options: {
             cacheDirectory : true,
-            presets: [
-              ['es2015', {modules: false}]
-            ],
-// ES7
-            plugins: [
-// 模块动态导入
-              'syntax-dynamic-import',
-              'transform-async-to-generator',
-              'transform-regenerator',
-// 运行时转换
-              'transform-runtime'
-            ]
+//             presets: [
+//               ['es2015', {modules: false}]
+//             ],
+// // ES7
+//             plugins: [
+// // 模块动态导入
+//               'syntax-dynamic-import',
+//               'transform-async-to-generator',
+//               'transform-regenerator',
+// // 运行时转换
+//               'transform-runtime'
+//             ]
           }
         }
       },
@@ -149,27 +149,42 @@ let WebpackConfig = {
         test: /\.less$/,
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
-          use: [{
-            loader: "css-loader",
-            options: {
-              importLoaders: 2,
-              sourceMap: true,
-              minimize: false
-            }
-          }, {
-            // https://webpack.js.org/guides/migrating/#what-are-options-
-            loader: "less-loader",
-            options: {
-              sourceMap: true,
-              modifyVars: {
-                // 'primary-color': '#1DA57A',
-                // 'link-color': '#1DA57A',
-                'border-radius-base': '1px',
-                'border-radius-sm': '1px',
-                'line-height-base': '1.2',
+          use: [
+            {
+              loader: "css-loader",
+              options: {
+                importLoaders: 2,
+                sourceMap: true,
+                minimize: false
               }
-            }
-          }]
+            }, {
+              loader: 'postcss-loader',
+              options: {
+                plugins: function () {
+                  return [
+                    require('autoprefixer')
+                  ];
+                }
+              }
+            },
+            {
+              // https://webpack.js.org/guides/migrating/#what-are-options-
+              loader: "less-loader",
+              options: {
+                sourceMap: true,
+                modifyVars: {
+                  // 'primary-color': '#1DA57A',
+                  // 'link-color': '#1DA57A',
+                  'border-radius-base': '1px',
+                  'border-radius-sm': '1px',
+                  'line-height-base': '1.2',
+                  'text-color': 'fade(#000, 80%)',
+                  'font-size-base': '14px',
+
+                }
+              }
+            },
+          ]
         })
       },
       {
@@ -219,11 +234,6 @@ devtool: 'cheap-module-source-map',
 //     screw_ie8: true
 //   }
 // }),
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: ["vendor", "manifest"],
-    //   filename: '[name].[hash].js',
-    //   minChunks: 2
-    // }),
     new webpack.optimize.CommonsChunkPlugin({
       name: ["vendor", "manifest"],
       filename: '[name].js',
