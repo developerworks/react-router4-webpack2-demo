@@ -30,6 +30,7 @@ const WriteFilePlugin            = require('write-file-webpack-plugin');
 // const I18nPlugin                 = require("i18n-webpack-plugin");
 const OfflinePlugin              = require('offline-plugin');
 const QiniuPlugin                = require('qiniu-webpack-plugin');
+const WebpackNotifierPlugin      = require('webpack-notifier');
 
 
 let theme = {};
@@ -402,6 +403,13 @@ let WebpackConfig = {
     //   bucket: 'webpack-bucket-name',
     //   path: '[hash]'
     // }),
+    new WebpackNotifierPlugin({
+      title: 'Webpack 2',
+      // contentImage: path.join(__dirname, 'logo.png'),
+      excludeWarnings: true,
+      alwaysNotify: true,
+      skipFirstNotification: false,
+    }),
   ],
 
   // ---------------------------------------------------------
