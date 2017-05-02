@@ -396,12 +396,12 @@ let WebpackConfig = {
       ],
     }),
     new WriteFilePlugin(),
-    new QiniuPlugin({
-      ACCESS_KEY: '',
-      SECRET_KEY: '',
-      bucket: 'webpack-bucket-name',
-      path: '[hash]'
-    }),
+    // new QiniuPlugin({
+    //   ACCESS_KEY: '',
+    //   SECRET_KEY: '',
+    //   bucket: 'webpack-bucket-name',
+    //   path: '[hash]'
+    // }),
   ],
 
   // ---------------------------------------------------------
