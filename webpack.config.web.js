@@ -29,6 +29,7 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const WriteFilePlugin            = require('write-file-webpack-plugin');
 // const I18nPlugin                 = require("i18n-webpack-plugin");
 const OfflinePlugin              = require('offline-plugin');
+const QiniuPlugin                = require('qiniu-webpack-plugin');
 
 
 let theme = {};
@@ -344,10 +345,17 @@ let WebpackConfig = {
 //     windows: false
 //   }
 // }),
-
-// -------------------------
-//
-// -------------------------
+  // new webpack.ProgressPlugin(function(percentage, msg) {
+  //   var stream = process.stderr;
+  //   if (stream.isTTY && percentage < 0.71) {
+  //     stream.cursorTo(0);
+  //     stream.write('  ' + msg);
+  //     stream.clearLine(1);
+  //   } else if (percentage === 1) {
+  //     console.log('');
+  //     console.log('webpack: bundle build is now finished.');
+  //   }
+  // }),
 
   new webpack.DllReferencePlugin({
     context: __dirname,
@@ -372,7 +380,6 @@ let WebpackConfig = {
         name: 'dev',
         reload: false
     }),
-    new WriteFilePlugin(),
     new webpack.HotModuleReplacementPlugin(),
     // new I18nPlugin(languageConfig, {
     //   functionName: '__',
@@ -387,7 +394,14 @@ let WebpackConfig = {
       main: [
         'vendor.*.dll.js',
       ],
-    })
+    }),
+    new WriteFilePlugin(),
+    new QiniuPlugin({
+      ACCESS_KEY: '',
+      SECRET_KEY: '',
+      bucket: 'webpack-bucket-name',
+      path: '[hash]'
+    }),
   ],
 
   // ---------------------------------------------------------

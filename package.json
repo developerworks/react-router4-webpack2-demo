@@ -67,6 +67,7 @@
     "postcss-smart-import": "^0.6.12",
     "precss": "^1.4.0",
     "preload-webpack-plugin": "^1.2.2",
+    "qiniu-webpack-plugin": "^0.4.2",
     "react-hot-loader": "next",
     "react-native-css-loader": "^1.0.2",
     "sass-loader": "^6.0.3",
