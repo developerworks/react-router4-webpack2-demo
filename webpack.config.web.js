@@ -6,10 +6,10 @@ const fs                         = require('fs');
 const glob                       = require('glob');
 const path                       = require('path');
 // 配置变量
-const projectRoot               = path.resolve(__dirname, 'package.json');
+const projectRoot                = path.resolve(__dirname, 'package.json');
 // const publicPath                 = 'http://locahost:8080/';
 const publicPath                 = '/';
-const packageConfig             = fs.existsSync(projectRoot) ? require(projectRoot) : {};
+const packageConfig              = fs.existsSync(projectRoot) ? require(projectRoot) : {};
 const autoprefixer               = require('autoprefixer');
 const HappyPack                  = require('happypack');
 const happyThreadPool            = HappyPack.ThreadPool({ size: os.cpus().length });
@@ -31,6 +31,7 @@ const WriteFilePlugin            = require('write-file-webpack-plugin');
 const OfflinePlugin              = require('offline-plugin');
 const QiniuPlugin                = require('qiniu-webpack-plugin');
 const WebpackNotifierPlugin      = require('webpack-notifier');
+// const WebpackGraphqlSchemaPlugin = require('webpack-plugin-graphql-schema-hot');
 
 
 let theme = {};
@@ -404,7 +405,7 @@ let WebpackConfig = {
     //   path: '[hash]'
     // }),
     new WebpackNotifierPlugin({
-      title: 'Webpack 2',
+      title: 'Webpack构建通知',
       // contentImage: path.join(__dirname, 'logo.png'),
       excludeWarnings: true,
       alwaysNotify: true,
