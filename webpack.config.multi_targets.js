@@ -3,5 +3,5 @@ const electron  = require('./webpack.config.electron');
 
 module.exports = [
   web,
-  electron
+  // electron
 ];

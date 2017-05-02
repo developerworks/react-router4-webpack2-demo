@@ -25,10 +25,13 @@ const ExtractTextPlugin          = require("extract-text-webpack-plugin");
 const FaviconsWebpackPlugin      = require('favicons-webpack-plugin');
 const BrowserSyncPlugin          = require('browser-sync-webpack-plugin');
 const HtmlWebpackPlugin          = require('html-webpack-plugin');
+const AddAssetHtmlPlugin         = require('add-asset-html-webpack-plugin');
+
 const ManifestPlugin             = require('webpack-manifest-plugin');
 const ParallelUglifyPlugin       = require('webpack-parallel-uglify-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const WriteFilePlugin            = require('write-file-webpack-plugin');
+// const I18nPlugin                 = require("i18n-webpack-plugin");
 
 
 
@@ -205,20 +208,19 @@ let WebpackConfig = {
 // ---------------------------------------------------------
 // Source Map
 // ---------------------------------------------------------
-devtool: 'cheap-module-source-map',
+// devtool: 'cheap-module-source-map',
 // ---------------------------------------------------------
 // 解析
 // ---------------------------------------------------------
   resolve: {
     extensions: ['.ts', '.js', '.json'],
-    modules: [path.join(__dirname, 'app'), 'node_modules']
+    modules: [path.join(__dirname, 'src'), 'node_modules']
   },
 // ---------------------------------------------------------
 // 插件
 // ---------------------------------------------------------
   plugins: [
     // 内置插件
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
 // new webpack.optimize.UglifyJsPlugin({
 //   sourceMap: true,
@@ -243,11 +245,11 @@ devtool: 'cheap-module-source-map',
 // 复制静态资源
 // ---------------------------------------------
 
-    new CopyWebpackPlugin([
-      {from: './src/images',              to: 'images'},
-    ], {
-      copyUnmodified: true
-    }),
+    // new CopyWebpackPlugin([
+    //   {from: './src/images',              to: 'images'},
+    // ], {
+    //   copyUnmodified: true
+    // }),
 
 // ---------------------------------------------
 // 并行打包
@@ -299,6 +301,9 @@ devtool: 'cheap-module-source-map',
       xhtml: true,
       chunks: ['manifest', 'vendor', 'app']
     }),
+    new AddAssetHtmlPlugin({
+      filepath: require.resolve('./dist/vendor.9389d7ef810eeab740c3.dll.js')
+    }),
 
 // new ChunkManifestPlugin({
 //   filename: "chunk-manifest.json",
@@ -336,11 +341,10 @@ devtool: 'cheap-module-source-map',
 //
 // -------------------------
 
-// new webpack.DllPlugin({
-//   path: path.join(__dirname, "js", "[name]-manifest.json"),
-//   name: "[name]_[hash]"
-// })
-
+  new webpack.DllReferencePlugin({
+    context: __dirname,
+    manifest: require('./manifest.json')
+  }),
 
 // 脚本加载属性
 // new ScriptExtHtmlWebpackPlugin({
@@ -360,7 +364,13 @@ devtool: 'cheap-module-source-map',
         name: 'dev',
         reload: false
     }),
-    new WriteFilePlugin()
+    new WriteFilePlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    // new I18nPlugin(languageConfig, {
+    //   functionName: '__',
+    //   failOnMissing: false,
+    //   hideMessage: false
+    // })
   ],
 
   // ---------------------------------------------------------
@@ -369,7 +379,8 @@ devtool: 'cheap-module-source-map',
   devServer: {
     hot: true,
     contentBase: path.resolve(__dirname, 'dist'),
-    publicPath: publicPath
+    publicPath: publicPath,
+    inline: true
   }
 };
 

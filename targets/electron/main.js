@@ -51,6 +51,8 @@ function createWindow(){
     frame: true,
     width: mainWindowState.width,
     height: mainWindowState.height,
+    minWidth: 800,
+    minHeight: 500,
     x: mainWindowState.x,
     y: mainWindowState.y,
     center: true,

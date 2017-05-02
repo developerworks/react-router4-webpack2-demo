@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.config.multi_targets.js --watch --progress --history-api-fallback",
+    "start": "nodemon --watch webpack.config.web.js --exec \"webpack-dev-server --config webpack.config.multi_targets.js --watch --progress --history-api-fallback --info false\"",
+    "dev": "webpack-dev-server --config webpack.config.multi_targets.js --watch --progress --history-api-fallback --info false",
     "build": "webpack --progress --watch",
-    "build:mac": "webpack --config webpack.config.electron.js --progress && electron-packager dist_electron --platform=darwin --arch=x64 --out=_releases --overwrite --icon=./targets/electron/icon.icns",
+    "build:osx": "webpack --config webpack.config.electron.js --progress",
+    "package:osx": "electron-packager dist_electron --platform=darwin --arch=x64 --out=_releases --overwrite --icon=./targets/electron/icon.icns",
     "flow": "flow; test $? -eq 0 -o $? -eq 2"
   },
   "main": "main.js",
   "devDependencies": {
+    "add-asset-html-webpack-plugin": "^2.0.1",
     "autoprefixer": "^6.7.7",
     "babel-core": "^6.24.1",
     "babel-jest": "^19.0.0",
@@ -52,6 +55,7 @@
     "flow-bin": "^0.44.2",
     "happypack": "^3.0.3",
     "html-webpack-plugin": "^2.28.0",
+    "i18n-webpack-plugin": "^0.3.0",
     "jest": "^19.0.2",
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
