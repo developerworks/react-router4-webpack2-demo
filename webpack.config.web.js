@@ -5,18 +5,15 @@ const os                         = require('os');
 const fs                         = require('fs');
 const glob                       = require('glob');
 const path                       = require('path');
-
 // 配置变量
 const projectRoot               = path.resolve(__dirname, 'package.json');
 // const publicPath                 = 'http://locahost:8080/';
 const publicPath                 = '/';
 const packageConfig             = fs.existsSync(projectRoot) ? require(projectRoot) : {};
-
-
 const autoprefixer               = require('autoprefixer');
 const HappyPack                  = require('happypack');
 const happyThreadPool            = HappyPack.ThreadPool({ size: os.cpus().length });
-
+// 插件
 const webpack                    = require('webpack');
 // const PreloadWebpackPlugin       = require('preload-webpack-plugin');
 const ChunkManifestPlugin        = require("chunk-manifest-webpack-plugin");
@@ -26,9 +23,8 @@ const FaviconsWebpackPlugin      = require('favicons-webpack-plugin');
 const BrowserSyncPlugin          = require('browser-sync-webpack-plugin');
 const HtmlWebpackPlugin          = require('html-webpack-plugin');
 const AddAssetHtmlPlugin         = require('add-asset-html-webpack-plugin');
-
 const ManifestPlugin             = require('webpack-manifest-plugin');
-const ParallelUglifyPlugin       = require('webpack-parallel-uglify-plugin');
+// const ParallelUglifyPlugin       = require('webpack-parallel-uglify-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const WriteFilePlugin            = require('write-file-webpack-plugin');
 // const I18nPlugin                 = require("i18n-webpack-plugin");
