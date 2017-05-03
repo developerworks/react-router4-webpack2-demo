@@ -27,4 +27,28 @@ module.exports = {
       name: "[name]_[chunkhash]",
     })
   ],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components|dist|dist_electron|.cache|.happypack)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+            cacheIdentifier: 'v1',
+            presets: [
+              ['es2015', {modules: false}]
+            ],
+            plugins: [
+              'syntax-dynamic-import',
+              'transform-async-to-generator',
+              'transform-regenerator',
+              'transform-runtime'
+            ]
+          }
+        }
+      },
+    ]
+  }
 };
